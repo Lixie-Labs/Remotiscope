@@ -1,0 +1,205 @@
+#
+#	EMOTISCOPE APP
+#	developed by @lixielabs in Godot 3.5.3
+#
+
+extends VBoxContainer
+
+# Load children
+var setting_scene = load("res://Assets/UI/Setting/Setting.tscn")
+var slider_scene  = load("res://Assets/UI/Slider/Slider.tscn")
+
+# Current device IP
+var device_ip = "192.168.86.196" # TODO: wire up device discovery to Godot
+
+# Websocket client
+var STATE_REQUEST_FRAME_INTERVAL = 20
+var next_state_request_wait_counter = 0
+var ws_client
+var ws_client_connected = false
+var state_request_active = false
+var state_request_wait_frames = 0
+
+# --------------------------------------------------------
+# NETWORKING
+# --------------------------------------------------------
+func connect_to_websocket():
+	if ws_client_connected == false:
+		get_parent().spinner_enabled = true
+		# Start client
+		ws_client = WebSocketClient.new()
+		
+		# Connect callbacks
+		ws_client.connect("connection_closed", self, "ws_closed")
+		ws_client.connect("connection_error", self, "ws_error")
+		ws_client.connect("connection_established", self, "ws_connected")
+		ws_client.connect("data_received", self, "wsrx")
+		
+		# Initiate connection to an Emotiscope
+		var result = ws_client.connect_to_url("ws://"+device_ip+"/ws")
+		if result != OK:
+			print("Unable to connect")
+
+func ws_connected(proto = ""):
+	print("Connected with protocol: ", proto)
+	ws_client_connected = true
+	ws_client.get_peer(1).set_write_mode ( ws_client.get_peer(1).WRITE_MODE_TEXT )
+	state_request_active = false
+	state_request_wait_frames = 0
+
+func ws_closed(was_clean = false):
+	# was_clean tells if the disconnection was correctly notified
+	# by the remote peer before closing the socket.
+	print("Closed, clean: ", was_clean)
+	connect_to_websocket();
+	#restart_app()
+
+func wstx(message):
+	#print("TX: "+message)
+	if ws_client_connected == true:
+		#$Screen/Contents/DebugOutput.text = "TX: "+ message + "\n"
+		ws_client.get_peer(1).put_packet(message.to_utf8())
+	else:
+		print("WSTX while not connected")
+
+func wsrx():
+	var message = ws_client.get_peer(1).get_packet().get_string_from_utf8()
+	print("RX: "+message)
+	#$Screen/Contents/DebugOutput.text = "RX: " + message + "\n"
+	parse_emotiscope_packet(message)
+
+func restart_app():
+	print("####### SOFTWARE RESTART #######")
+	var main_scene = get_tree().get_root().get_child(0)
+	get_tree().reload_current_scene()
+
+func request_emotiscope_state():
+	wstx("EMO~get_state|1")
+	state_request_active = true
+	state_request_wait_frames = 0
+
+func kill_websocket():
+	ws_client_connected = false
+	ws_client.disconnect_from_host()
+	state_request_active = false
+	state_request_wait_frames = 0
+
+func run_websocket():
+	ws_client.poll()
+	
+	# If we haven't yet recieved a response
+	if state_request_active == true:
+		state_request_wait_frames += 1
+		# Restart app if no response in 2 seconds (on 60Hz screen)
+		if state_request_wait_frames >= 60:
+			kill_websocket()
+			connect_to_websocket()
+	
+	# Check if it's time to request Emotiscope's system state again
+	if next_state_request_wait_counter > 0:
+		next_state_request_wait_counter -= 1
+	else:
+		# Reset counter
+		next_state_request_wait_counter = STATE_REQUEST_FRAME_INTERVAL
+
+		if state_request_active == false:
+			if ws_client_connected == true and get_parent().touch_active == false:
+				request_emotiscope_state()
+
+# ----------------------------------------------------------------
+# Configuration
+# ----------------------------------------------------------------
+
+func parse_emotiscope_packet(packet):
+	state_request_active = false
+	
+	packet = packet.split("~")[1].split("|")
+	var section_header = packet[0]
+	var num_items = len(packet) - 1
+	
+	if section_header == "stats":
+		$Contents/DebugOutput.text = ""
+		
+		for i in range(num_items/2):
+			var stat_name = packet[1 + (i*2 + 0)]
+			var stat_value = packet[1 + (i*2 + 1)]
+
+			$Contents/DebugOutput.text += (stat_name + ": " + stat_value) + "\n"
+			
+	elif section_header == "config":
+		for i in range(num_items/4):
+			var config_name    = packet[1 + (i*4 + 0)]
+			var config_type    = packet[1 + (i*4 + 1)]
+			var config_ui_type = packet[1 + (i*4 + 2)]
+			var config_value   = packet[1 + (i*4 + 3)]
+			
+			update_config_item_by_name(config_name, config_type, config_ui_type, config_value)
+			
+			#print(config_name + ": " + config_value)
+	
+	elif section_header == "modes":
+		for i in range(num_items/2):
+			var mode_name = packet[1 + (i*2 + 0)]
+			var mode_type = packet[1 + (i*2 + 1)]
+			
+			#print(mode_name + ": " + mode_type)
+	
+	if get_parent().spinner_enabled == true:
+		get_parent().spinner_enabled = false
+
+func update_config_item_by_name(name, type, ui_type, value):
+	if not $Contents/SettingGallery/Settings.get_node(name):
+		#print("NO CONFIG FOUND for "+name)
+		
+		var setting = setting_scene.instance()
+		setting.name = name
+		
+		setting.config_pretty_name = name
+		setting.config_type = type
+		setting.config_value = float(value)
+		
+		if ui_type == "s" or ui_type == "t":
+			$Contents/SettingGallery/Settings.add_child(setting)
+	else:
+		#print("CONFIG FOUND")
+		if ui_type == "s" or ui_type == "t":
+			$Contents/SettingGallery/Settings.get_node(name).config_value = float(value)
+
+# -----------------------------------------------------------
+# Graphics
+# -----------------------------------------------------------
+
+func resize_settings():
+	var window_width = get_viewport().get_visible_rect().size.x
+	
+	for child in $Contents/SettingGallery/Settings.get_children():
+		child.rect_min_size.x = (window_width-50) / 3.0
+
+func run_graphics(delta):
+	resize_settings()
+
+func run_debug():
+	# Check if the F12 key is pressed
+	if Input.is_key_pressed(KEY_F12):
+		# Disable V-Sync
+		OS.vsync_enabled = false
+	else:
+		# Enable V-Sync
+		OS.vsync_enabled = true
+
+# ------------------------------------------------------------------------------------------
+# RUNTIME
+# ------------------------------------------------------------------------------------------
+
+func _ready():
+	connect_to_websocket()
+	$Contents/SettingGallery.get_h_scrollbar().modulate.a = 0.5
+
+var iter = 0
+
+func _process(delta):
+	# Call this in _process or _physics_process. Data transfer, and signals
+	# emission will only happen when calling this function.
+	run_websocket()
+	run_graphics(delta)
+	run_debug()

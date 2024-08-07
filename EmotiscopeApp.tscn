@@ -1,0 +1,157 @@
+[gd_scene load_steps=13 format=2]
+
+[ext_resource path="res://Assets/Themes/ThemeDefault.tres" type="Theme" id=1]
+[ext_resource path="res://Assets/Themes/ThemeHeaderText.tres" type="Theme" id=2]
+[ext_resource path="res://Assets/UI/Spinner/Spinner.tscn" type="PackedScene" id=3]
+[ext_resource path="res://EmotiscopeApp.gd" type="Script" id=4]
+[ext_resource path="res://Assets/SVG/info.svg" type="Texture" id=5]
+[ext_resource path="res://Assets/SVG/menu.svg" type="Texture" id=6]
+[ext_resource path="res://System.gd" type="Script" id=7]
+
+[sub_resource type="StyleBoxFlat" id=1]
+bg_color = Color( 0, 0, 0, 0.164706 )
+
+[sub_resource type="Gradient" id=3]
+offsets = PoolRealArray( 0, 0.995049 )
+colors = PoolColorArray( 0.113725, 0.0784314, 0.184314, 0, 0.109804, 0.0705882, 0.160784, 1 )
+
+[sub_resource type="GradientTexture" id=2]
+gradient = SubResource( 3 )
+width = 32
+
+[sub_resource type="Gradient" id=4]
+colors = PoolColorArray( 0.109804, 0.0705882, 0.160784, 1, 0.113725, 0.0784314, 0.184314, 0 )
+
+[sub_resource type="GradientTexture" id=5]
+gradient = SubResource( 4 )
+width = 32
+
+[node name="EmotiscopeApp" type="Panel"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+rect_scale = Vector2( 0.997866, 1.00391 )
+theme = ExtResource( 1 )
+custom_styles/panel = SubResource( 1 )
+script = ExtResource( 7 )
+
+[node name="Screen" type="VBoxContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 15.0
+margin_top = 15.0
+margin_right = -15.0
+margin_bottom = -15.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource( 4 )
+
+[node name="CanvasModulate" type="CanvasModulate" parent="Screen"]
+visible = false
+color = Color( 0.482353, 0.560784, 0.741176, 1 )
+
+[node name="Header" type="HBoxContainer" parent="Screen"]
+margin_right = 1070.0
+margin_bottom = 45.0
+alignment = 1
+
+[node name="HeaderIconLeft" type="TextureButton" parent="Screen/Header"]
+margin_right = 40.0
+margin_bottom = 45.0
+texture_normal = ExtResource( 6 )
+
+[node name="HeaderText" type="Label" parent="Screen/Header"]
+margin_left = 44.0
+margin_right = 1026.0
+margin_bottom = 45.0
+size_flags_horizontal = 3
+theme = ExtResource( 2 )
+custom_colors/font_color = Color( 1, 0.635294, 0.368627, 1 )
+text = "emotiscope"
+align = 1
+valign = 1
+
+[node name="HeaderIconRight" type="TextureButton" parent="Screen/Header"]
+margin_left = 1030.0
+margin_right = 1070.0
+margin_bottom = 45.0
+texture_normal = ExtResource( 5 )
+
+[node name="Contents" type="VBoxContainer" parent="Screen"]
+margin_top = 49.0
+margin_right = 1070.0
+margin_bottom = 1626.0
+size_flags_vertical = 3
+
+[node name="DebugOutput" type="RichTextLabel" parent="Screen/Contents"]
+margin_right = 1070.0
+margin_bottom = 300.0
+rect_min_size = Vector2( 0, 300 )
+theme = ExtResource( 1 )
+custom_colors/default_color = Color( 1, 0.635294, 0.368627, 1 )
+text = "debugging output below:
+"
+scroll_active = false
+scroll_following = true
+
+[node name="SettingGallery" type="ScrollContainer" parent="Screen/Contents"]
+margin_top = 304.0
+margin_right = 1070.0
+margin_bottom = 1577.0
+grow_horizontal = 0
+grow_vertical = 0
+rect_min_size = Vector2( 0, 300 )
+rect_clip_content = false
+size_flags_vertical = 3
+theme = ExtResource( 1 )
+follow_focus = true
+scroll_vertical_enabled = false
+scroll_deadzone = 10
+
+[node name="Settings" type="HBoxContainer" parent="Screen/Contents/SettingGallery"]
+margin_bottom = 1273.0
+size_flags_vertical = 3
+custom_constants/separation = 10
+alignment = 1
+
+[node name="Footer" type="HBoxContainer" parent="Screen"]
+margin_top = 1630.0
+margin_right = 1070.0
+margin_bottom = 1670.0
+rect_min_size = Vector2( 0, 40 )
+alignment = 1
+
+[node name="CopyrightText" type="Label" parent="Screen/Footer"]
+margin_top = 13.0
+margin_right = 1070.0
+margin_bottom = 27.0
+size_flags_horizontal = 3
+theme = ExtResource( 1 )
+custom_colors/font_color = Color( 0.756863, 0.329412, 0.447059, 1 )
+text = "designed by connor nishijima for lixie labs (2023-2024)"
+align = 1
+valign = 1
+
+[node name="ScreenFadeRight" type="TextureRect" parent="."]
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -15.0
+margin_right = -14.0
+rect_min_size = Vector2( 16, 0 )
+size_flags_horizontal = 0
+size_flags_vertical = 0
+texture = SubResource( 2 )
+expand = true
+
+[node name="ScreenFadeLeft" type="TextureRect" parent="."]
+anchor_bottom = 1.0
+margin_left = -3.05176e-05
+margin_right = 15.0
+rect_min_size = Vector2( 16, 0 )
+size_flags_horizontal = 0
+size_flags_vertical = 0
+texture = SubResource( 5 )
+expand = true
+
+[node name="Spinner" parent="." instance=ExtResource( 3 )]
+position = Vector2( 550, 850 )
