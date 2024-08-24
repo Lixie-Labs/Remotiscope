@@ -10,7 +10,7 @@ var setting_scene = load("res://Assets/UI/Setting/Setting.tscn")
 var slider_scene  = load("res://Assets/UI/Slider/Slider.tscn")
 
 # Current device IP
-var device_ip = "192.168.86.196" # TODO: wire up device discovery to Godot
+var device_ip = "192.168.86.224" # TODO: wire up device discovery to Godot
 
 # Websocket client
 var STATE_REQUEST_FRAME_INTERVAL = 20
@@ -64,7 +64,7 @@ func wstx(message):
 
 func wsrx():
 	var message = ws_client.get_peer(1).get_packet().get_string_from_utf8()
-	print("RX: "+message)
+	#print("RX: "+message)
 	#$Screen/Contents/DebugOutput.text = "RX: " + message + "\n"
 	parse_emotiscope_packet(message)
 
@@ -72,6 +72,9 @@ func restart_app():
 	print("####### SOFTWARE RESTART #######")
 	var main_scene = get_tree().get_root().get_child(0)
 	get_tree().reload_current_scene()
+
+func request_emotiscope_graph():
+	wstx("EMO~get_graph|1")
 
 func request_emotiscope_state():
 	wstx("EMO~get_state|1")
@@ -91,7 +94,7 @@ func run_websocket():
 	if state_request_active == true:
 		state_request_wait_frames += 1
 		# Restart app if no response in 2 seconds (on 60Hz screen)
-		if state_request_wait_frames >= 60:
+		if state_request_wait_frames >= 120:
 			kill_websocket()
 			connect_to_websocket()
 	
@@ -118,13 +121,13 @@ func parse_emotiscope_packet(packet):
 	var num_items = len(packet) - 1
 	
 	if section_header == "stats":
-		$Contents/DebugOutput.text = ""
+		$Contents/DebugText.text = ""
 		
 		for i in range(num_items/2):
 			var stat_name = packet[1 + (i*2 + 0)]
 			var stat_value = packet[1 + (i*2 + 1)]
 
-			$Contents/DebugOutput.text += (stat_name + ": " + stat_value) + "\n"
+			$Contents/DebugText.text += (stat_name + ": " + stat_value) + "\n"
 			
 	elif section_header == "config":
 		for i in range(num_items/4):
@@ -144,6 +147,19 @@ func parse_emotiscope_packet(packet):
 			
 			#print(mode_name + ": " + mode_type)
 	
+	elif section_header == "graph":
+		num_items = int(packet[1])
+		if num_items != len($Contents/DebugGraph.graph_items):
+			$Contents/DebugGraph.set_graph_length(num_items)
+			print("RESIZING GRAPH")
+		
+		var graph_contents = packet[2].split(",")
+		for i in range(num_items):
+			var new_value = float(graph_contents[i]) / 255.0
+			$Contents/DebugGraph.graph_items[i] = new_value
+		
+		$Contents/DebugGraph.update_graph()
+		
 	if get_parent().spinner_enabled == true:
 		get_parent().spinner_enabled = false
 
@@ -203,3 +219,5 @@ func _process(delta):
 	run_websocket()
 	run_graphics(delta)
 	run_debug()
+	
+	request_emotiscope_graph()

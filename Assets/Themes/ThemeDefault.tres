@@ -28,6 +28,7 @@ font_data = ExtResource( 1 )
 
 [resource]
 default_font = SubResource( 1 )
+HBoxContainer/constants/separation = 1
 HScrollBar/styles/grabber = SubResource( 2 )
 HScrollBar/styles/scroll = SubResource( 3 )
 Label/colors/font_color = Color( 1, 0.635294, 0.368627, 1 )
