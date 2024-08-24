@@ -87,13 +87,13 @@ size_flags_vertical = 3
 anchor_right = 0.0
 anchor_bottom = 0.0
 margin_right = 1070.0
-margin_bottom = 150.0
+margin_bottom = 734.0
 rect_min_size = Vector2( 0, 150 )
 
 [node name="DebugText" type="RichTextLabel" parent="Screen/Contents"]
-margin_top = 154.0
+margin_top = 738.0
 margin_right = 1070.0
-margin_bottom = 254.0
+margin_bottom = 838.0
 rect_min_size = Vector2( 0, 100 )
 theme = ExtResource( 1 )
 custom_colors/default_color = Color( 1, 0.635294, 0.368627, 1 )
@@ -103,7 +103,7 @@ scroll_active = false
 scroll_following = true
 
 [node name="SettingGallery" type="ScrollContainer" parent="Screen/Contents"]
-margin_top = 258.0
+margin_top = 842.0
 margin_right = 1070.0
 margin_bottom = 1577.0
 grow_horizontal = 0
@@ -117,7 +117,7 @@ scroll_vertical_enabled = false
 scroll_deadzone = 10
 
 [node name="Settings" type="HBoxContainer" parent="Screen/Contents/SettingGallery"]
-margin_bottom = 1319.0
+margin_bottom = 735.0
 size_flags_vertical = 3
 custom_constants/separation = 10
 alignment = 1
