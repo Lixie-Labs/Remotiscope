@@ -7,7 +7,7 @@ var DebugGraphTexture : ImageTexture
 var texture_rect : TextureRect
 
 func update_graph():
-	var graph_line_width = 256.0 / len(graph_items)
+	var graph_line_width = 256 / len(graph_items)
 
 	var clear_col = Color8(0,0,0)
 	DebugGraphImage.fill_rect(Rect2(
@@ -16,22 +16,21 @@ func update_graph():
 	), clear_col)
 	
 	for i in range(len(graph_items)):
-		var x_pos = graph_line_width * i
-
 		var rect = Rect2(
 			Vector2(
-				x_pos,
-				150 - (graph_items[i] * 100)
+				graph_line_width * i,
+				150 - (graph_items[i] * 150)
 			),
 			Vector2(
-				x_pos,
-				150 - (graph_items[i] * 100)
+				graph_line_width,
+				150
 			) 
 		)
 		
+		#print(rect)
+		
 		var col = Color8(255, 0, 0)
 		DebugGraphImage.fill_rect(rect, col)
-		x_pos += graph_line_width
 	
 	DebugGraphTexture.set_data(DebugGraphImage)
 

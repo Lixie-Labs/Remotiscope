@@ -65,7 +65,8 @@ func wstx(message):
 func wsrx():
 	var message = ws_client.get_peer(1).get_packet().get_string_from_utf8()
 	#print("RX: "+message)
-	#$Screen/Contents/DebugOutput.text = "RX: " + message + "\n"
+	
+	#$Contents/DebugText.text = "RX: " + message + "\n"
 	parse_emotiscope_packet(message)
 
 func restart_app():
