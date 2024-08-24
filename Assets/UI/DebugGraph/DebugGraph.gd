@@ -8,8 +8,8 @@ var texture_rect : TextureRect
 
 func update_graph():
 	var graph_line_width = 256 / len(graph_items)
-
-	var clear_col = Color8(0,0,0)
+	
+	var clear_col = Color8(0,0,0, 0.0)
 	DebugGraphImage.fill_rect(Rect2(
 		Vector2(0,0),
 		Vector2(256,150)
@@ -44,7 +44,7 @@ func _ready():
 	
 	# Create the image
 	DebugGraphImage = Image.new()
-	DebugGraphImage.create(256, 150, false, Image.FORMAT_RGB8)
+	DebugGraphImage.create(256, 150, false, Image.FORMAT_RGBA8)
 
 	# Create a texture from the image
 	DebugGraphTexture = ImageTexture.new()
