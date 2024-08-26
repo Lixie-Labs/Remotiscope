@@ -137,7 +137,8 @@ func parse_emotiscope_packet(packet):
 			var config_ui_type = packet[1 + (i*4 + 2)]
 			var config_value   = packet[1 + (i*4 + 3)]
 			
-			update_config_item_by_name(config_name, config_type, config_ui_type, config_value)
+			if config_ui_type == "s" or config_ui_type == "t":
+				update_config_item_by_name(config_name, config_type, config_ui_type, config_value)
 			
 			#print(config_name + ": " + config_value)
 	
@@ -213,12 +214,12 @@ func _ready():
 	$Contents/SettingGallery.get_h_scrollbar().modulate.a = 0.5
 
 var iter = 0
-
 func _process(delta):
+	iter += 1
 	# Call this in _process or _physics_process. Data transfer, and signals
 	# emission will only happen when calling this function.
 	run_websocket()
 	run_graphics(delta)
 	run_debug()
-	
-	request_emotiscope_graph()
+
+	#request_emotiscope_graph()

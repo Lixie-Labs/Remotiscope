@@ -29,7 +29,7 @@ func update_graph():
 		
 		#print(rect)
 		
-		var col = Color8(255, 0, 0)
+		var col = Color8(255, 255, 255, 127)
 		DebugGraphImage.fill_rect(rect, col)
 	
 	DebugGraphTexture.set_data(DebugGraphImage)
