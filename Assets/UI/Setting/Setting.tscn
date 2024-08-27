@@ -1,26 +1,63 @@
-[gd_scene load_steps=13 format=2]
+[gd_scene load_steps=14 format=2]
 
 [ext_resource path="res://Assets/UI/Setting/SettingLabelStyle.tres" type="StyleBox" id=1]
 [ext_resource path="res://Assets/UI/Setting/Setting.gd" type="Script" id=2]
 [ext_resource path="res://Assets/Themes/ThemeDefault.tres" type="Theme" id=3]
 [ext_resource path="res://Assets/Fonts/chakra_petch.ttf" type="DynamicFontData" id=4]
-[ext_resource path="res://Assets/UI/Setting/SettingSliderBackdrop.tres" type="StyleBox" id=5]
 
-[sub_resource type="StyleBoxEmpty" id=11]
-
-[sub_resource type="StyleBoxFlat" id=5]
-bg_color = Color( 0.756863, 0.329412, 0.447059, 1 )
-border_width_left = 10
-border_width_top = 10
-border_width_right = 10
-border_width_bottom = 10
-border_color = Color( 0.756863, 0.329412, 0.447059, 1 )
+[sub_resource type="StyleBoxFlat" id=15]
+bg_color = Color( 0, 0, 0, 1 )
+draw_center = false
+border_width_top = 4
+border_width_bottom = 12
+border_color = Color( 1, 0.635294, 0.368627, 0.141176 )
 border_blend = true
 corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
 corner_radius_bottom_left = 10
 
+[sub_resource type="StyleBoxFlat" id=12]
+bg_color = Color( 0.756863, 0.329412, 0.447059, 0.196078 )
+border_color = Color( 0, 0, 0, 0 )
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+corner_detail = 16
+shadow_color = Color( 0.756863, 0.329412, 0.447059, 0.121569 )
+shadow_offset = Vector2( 0, 10 )
+
+[sub_resource type="StyleBoxFlat" id=13]
+bg_color = Color( 0.145098, 0.0627451, 0.0862745, 0.784314 )
+border_color = Color( 0.345098, 0.592157, 0.803922, 0 )
+border_blend = true
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+corner_detail = 16
+shadow_color = Color( 0.756863, 0.329412, 0.447059, 0.0666667 )
+shadow_size = 40
+
+[sub_resource type="DynamicFont" id=8]
+size = 20
+extra_spacing_top = -20
+font_data = ExtResource( 4 )
+
+[sub_resource type="StyleBoxFlat" id=14]
+content_margin_left = 70.0
+content_margin_bottom = 14.0
+bg_color = Color( 0.756863, 0.329412, 0.447059, 1 )
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+shadow_color = Color( 0, 0, 0, 0.262745 )
+shadow_size = 7
+
 [sub_resource type="StyleBoxFlat" id=10]
-bg_color = Color( 0.345098, 0.592157, 0.803922, 0.188235 )
+bg_color = Color( 0.345098, 0.592157, 0.803922, 0.196078 )
 border_color = Color( 0, 0, 0, 0 )
 corner_radius_top_left = 10
 corner_radius_top_right = 10
@@ -37,17 +74,12 @@ border_blend = true
 corner_radius_top_left = 4
 corner_radius_bottom_left = 4
 corner_detail = 16
-shadow_color = Color( 0.345098, 0.592157, 0.803922, 0.14902 )
-shadow_size = 20
-
-[sub_resource type="DynamicFont" id=8]
-size = 20
-extra_spacing_top = -20
-font_data = ExtResource( 4 )
+shadow_color = Color( 0.345098, 0.592157, 0.803922, 0.0784314 )
+shadow_size = 40
 
 [sub_resource type="StyleBoxFlat" id=9]
 content_margin_left = 70.0
-content_margin_bottom = 4.0
+content_margin_bottom = 14.0
 bg_color = Color( 0.345098, 0.592157, 0.803922, 1 )
 corner_radius_top_left = 10
 corner_radius_top_right = 10
@@ -61,18 +93,15 @@ font_data = ExtResource( 4 )
 
 [node name="Setting" type="Panel"]
 anchor_right = 1.0
-anchor_bottom = 1.0
-margin_bottom = -1600.0
 rect_min_size = Vector2( 0, 100 )
 size_flags_horizontal = 3
-custom_styles/panel = SubResource( 11 )
+custom_styles/panel = SubResource( 15 )
 script = ExtResource( 2 )
 
 [node name="Slider" type="Control" parent="."]
 visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
-rect_min_size = Vector2( 0, 100 )
 mouse_filter = 1
 size_flags_horizontal = 3
 
@@ -80,14 +109,31 @@ size_flags_horizontal = 3
 anchor_right = 1.0
 anchor_bottom = 1.0
 rect_min_size = Vector2( 0, 100 )
-custom_styles/panel = ExtResource( 5 )
+custom_styles/panel = SubResource( 12 )
 
-[node name="Value" type="Panel" parent="Slider"]
-margin_right = 287.0
-margin_bottom = 100.0
-rect_min_size = Vector2( 0, 100 )
-mouse_filter = 1
-custom_styles/panel = SubResource( 5 )
+[node name="Track" type="Panel" parent="Slider"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 61.0
+margin_top = 61.0
+margin_right = -60.0
+margin_bottom = -28.0
+custom_styles/panel = SubResource( 13 )
+
+[node name="Knob" type="Label" parent="Slider"]
+margin_left = 6.0
+margin_top = 39.0
+margin_right = 131.0
+margin_bottom = 94.0
+custom_colors/font_color = Color( 0, 0, 0, 0.501961 )
+custom_colors/font_color_shadow = Color( 1, 0.435294, 0.545098, 1 )
+custom_constants/shadow_offset_x = 0
+custom_constants/shadow_offset_y = 1
+custom_fonts/font = SubResource( 8 )
+custom_styles/normal = SubResource( 14 )
+text = "100%"
+align = 1
+valign = 2
 
 [node name="Toggle" type="Control" parent="."]
 anchor_right = 1.0
@@ -110,7 +156,7 @@ margin_right = -60.0
 margin_bottom = -28.0
 custom_styles/panel = SubResource( 7 )
 
-[node name="Label" type="Label" parent="Toggle"]
+[node name="Knob" type="Label" parent="Toggle"]
 margin_left = 6.0
 margin_top = 39.0
 margin_right = 131.0
@@ -121,18 +167,21 @@ custom_constants/shadow_offset_x = 0
 custom_constants/shadow_offset_y = 1
 custom_fonts/font = SubResource( 8 )
 custom_styles/normal = SubResource( 9 )
-text = "ON
-"
+text = "ON"
 align = 1
 valign = 2
 
 [node name="Label" type="Label" parent="."]
-margin_right = 131.0
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -65.5
+margin_right = 65.5
 margin_bottom = 31.0
+grow_horizontal = 2
 mouse_filter = 1
 size_flags_horizontal = 3
 theme = ExtResource( 3 )
-custom_colors/font_color = Color( 0.375, 0.236729, 0.135627, 1 )
+custom_colors/font_color = Color( 1, 0.635294, 0.368627, 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 0.470588 )
 custom_constants/shadow_offset_x = 0
 custom_constants/line_spacing = 0
