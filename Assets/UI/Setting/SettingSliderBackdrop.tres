@@ -1,0 +1,17 @@
+[gd_resource type="StyleBoxFlat" format=2]
+
+[resource]
+bg_color = Color( 0.756863, 0.329412, 0.447059, 0.117647 )
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color( 0.756863, 0.329412, 0.447059, 1 )
+border_blend = true
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+corner_detail = 16
+shadow_color = Color( 0.756863, 0.329412, 0.447059, 0.121569 )
+shadow_offset = Vector2( 0, 10 )

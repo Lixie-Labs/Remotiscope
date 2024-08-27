@@ -1,52 +1,143 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=13 format=2]
 
-[ext_resource path="res://Assets/UI/Slider/Slider.tscn" type="PackedScene" id=1]
+[ext_resource path="res://Assets/UI/Setting/SettingLabelStyle.tres" type="StyleBox" id=1]
 [ext_resource path="res://Assets/UI/Setting/Setting.gd" type="Script" id=2]
 [ext_resource path="res://Assets/Themes/ThemeDefault.tres" type="Theme" id=3]
 [ext_resource path="res://Assets/Fonts/chakra_petch.ttf" type="DynamicFontData" id=4]
+[ext_resource path="res://Assets/UI/Setting/SettingSliderBackdrop.tres" type="StyleBox" id=5]
 
-[sub_resource type="DynamicFont" id=1]
+[sub_resource type="StyleBoxEmpty" id=11]
+
+[sub_resource type="StyleBoxFlat" id=5]
+bg_color = Color( 0.756863, 0.329412, 0.447059, 1 )
+border_width_left = 10
+border_width_top = 10
+border_width_right = 10
+border_width_bottom = 10
+border_color = Color( 0.756863, 0.329412, 0.447059, 1 )
+border_blend = true
+corner_radius_top_left = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id=10]
+bg_color = Color( 0.345098, 0.592157, 0.803922, 0.188235 )
+border_color = Color( 0, 0, 0, 0 )
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+corner_detail = 16
+shadow_color = Color( 0.756863, 0.329412, 0.447059, 0.121569 )
+shadow_offset = Vector2( 0, 10 )
+
+[sub_resource type="StyleBoxFlat" id=7]
+bg_color = Color( 0.054902, 0.0941176, 0.129412, 0.780392 )
+border_color = Color( 0.345098, 0.592157, 0.803922, 0 )
+border_blend = true
+corner_radius_top_left = 4
+corner_radius_bottom_left = 4
+corner_detail = 16
+shadow_color = Color( 0.345098, 0.592157, 0.803922, 0.14902 )
+shadow_size = 20
+
+[sub_resource type="DynamicFont" id=8]
+size = 20
+extra_spacing_top = -20
 font_data = ExtResource( 4 )
 
-[sub_resource type="StyleBoxEmpty" id=2]
-content_margin_left = 0.0
-content_margin_right = 1.0
-content_margin_top = 0.0
-content_margin_bottom = 1.0
+[sub_resource type="StyleBoxFlat" id=9]
+content_margin_left = 70.0
+content_margin_bottom = 4.0
+bg_color = Color( 0.345098, 0.592157, 0.803922, 1 )
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
 
-[node name="Setting" type="VBoxContainer"]
+[sub_resource type="DynamicFont" id=2]
+outline_color = Color( 0, 0, 0, 0.0627451 )
+extra_spacing_top = 4
+font_data = ExtResource( 4 )
+
+[node name="Setting" type="Panel"]
 anchor_right = 1.0
 anchor_bottom = 1.0
-mouse_filter = 2
-size_flags_horizontal = 0
-size_flags_vertical = 3
+margin_bottom = -1600.0
+rect_min_size = Vector2( 0, 100 )
+size_flags_horizontal = 3
+custom_styles/panel = SubResource( 11 )
 script = ExtResource( 2 )
-config_value = 0.0
+
+[node name="Slider" type="Control" parent="."]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+rect_min_size = Vector2( 0, 100 )
+mouse_filter = 1
+size_flags_horizontal = 3
+
+[node name="Backdrop" type="Panel" parent="Slider"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+rect_min_size = Vector2( 0, 100 )
+custom_styles/panel = ExtResource( 5 )
+
+[node name="Value" type="Panel" parent="Slider"]
+margin_right = 287.0
+margin_bottom = 100.0
+rect_min_size = Vector2( 0, 100 )
+mouse_filter = 1
+custom_styles/panel = SubResource( 5 )
+
+[node name="Toggle" type="Control" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 1
+size_flags_horizontal = 3
+
+[node name="Backdrop" type="Panel" parent="Toggle"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+rect_min_size = Vector2( 0, 100 )
+custom_styles/panel = SubResource( 10 )
+
+[node name="Track" type="Panel" parent="Toggle"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 61.0
+margin_top = 61.0
+margin_right = -60.0
+margin_bottom = -28.0
+custom_styles/panel = SubResource( 7 )
+
+[node name="Label" type="Label" parent="Toggle"]
+margin_left = 6.0
+margin_top = 39.0
+margin_right = 131.0
+margin_bottom = 94.0
+custom_colors/font_color = Color( 0, 0, 0, 0.501961 )
+custom_colors/font_color_shadow = Color( 0.396078, 0.721569, 1, 1 )
+custom_constants/shadow_offset_x = 0
+custom_constants/shadow_offset_y = 1
+custom_fonts/font = SubResource( 8 )
+custom_styles/normal = SubResource( 9 )
+text = "ON
+"
+align = 1
+valign = 2
 
 [node name="Label" type="Label" parent="."]
-margin_right = 1100.0
-margin_bottom = 32.0
-rect_min_size = Vector2( 0, 32 )
+margin_right = 131.0
+margin_bottom = 31.0
+mouse_filter = 1
+size_flags_horizontal = 3
 theme = ExtResource( 3 )
-custom_fonts/font = SubResource( 1 )
-custom_styles/normal = SubResource( 2 )
-text = "Setting"
+custom_colors/font_color = Color( 0.375, 0.236729, 0.135627, 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 0.470588 )
+custom_constants/shadow_offset_x = 0
+custom_constants/line_spacing = 0
+custom_constants/shadow_offset_y = -1
+custom_fonts/font = SubResource( 2 )
+custom_styles/normal = ExtResource( 1 )
+text = "  SETTING NAME  "
 align = 1
-valign = 1
-uppercase = true
-
-[node name="Slider" parent="." instance=ExtResource( 1 )]
-anchor_left = 0.0
-anchor_top = 0.0
-margin_top = 36.0
-margin_right = 1100.0
-margin_bottom = 1686.0
-rect_scale = Vector2( 1, 1 )
-
-[node name="BottomPadding" type="HBoxContainer" parent="."]
-margin_top = 1690.0
-margin_right = 1100.0
-margin_bottom = 1700.0
-rect_min_size = Vector2( 0, 10 )
-
-[connection signal="gui_input" from="." to="." method="_on_Setting_gui_input"]

@@ -60,7 +60,7 @@ func ws_closed(was_clean = false):
 	#restart_app()
 
 func wstx(message):
-	print("TX: "+message)
+	#print("TX: "+message)
 	if ws_client_connected == true:
 		#$Screen/Contents/DebugOutput.text = "TX: "+ message + "\n"
 		ws_client.get_peer(1).put_packet(message.to_utf8())
@@ -69,7 +69,7 @@ func wstx(message):
 
 func wsrx():
 	var message = ws_client.get_peer(1).get_packet().get_string_from_utf8()
-	print("RX: "+message)
+	#print("RX: "+message)
 	
 	#$Contents/DebugText.text = "RX: " + message + "\n"
 	parse_emotiscope_packet(message)
@@ -133,7 +133,7 @@ func parse_emotiscope_packet(packet):
 			var stat_name = packet[1 + (i*2 + 0)]
 			var stat_value = packet[1 + (i*2 + 1)]
 
-			$Contents/DebugText.text += (stat_name + ": " + stat_value) + "\n"
+			$Contents/DebugText.text += (stat_name + ": " + stat_value) + " "
 			
 	elif section_header == "config":
 		for i in range(num_items/4):
@@ -142,8 +142,8 @@ func parse_emotiscope_packet(packet):
 			var config_ui_type = packet[1 + (i*4 + 2)]
 			var config_value   = packet[1 + (i*4 + 3)]
 			
-			if config_ui_type == "s" or config_ui_type == "t":
-				update_config_item_by_name(config_name, config_type, config_ui_type, config_value)
+			#if config_ui_type == "s" or config_ui_type == "t":
+			#	update_config_item_by_name(config_name, config_type, config_ui_type, config_value)
 			
 			#print(config_name + ": " + config_value)
 	
@@ -269,4 +269,4 @@ func _process(delta):
 	run_graphics(delta)
 	run_debug()
 
-	#request_emotiscope_graph()
+	request_emotiscope_graph()

@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=2]
+[gd_scene load_steps=15 format=2]
 
 [ext_resource path="res://Assets/Themes/ThemeDefault.tres" type="Theme" id=1]
 [ext_resource path="res://Assets/Themes/ThemeHeaderText.tres" type="Theme" id=2]
@@ -8,6 +8,7 @@
 [ext_resource path="res://Assets/SVG/menu.svg" type="Texture" id=6]
 [ext_resource path="res://System.gd" type="Script" id=7]
 [ext_resource path="res://Assets/UI/DebugGraph/DebugGraph.tscn" type="PackedScene" id=8]
+[ext_resource path="res://Assets/UI/SettingGallery/SettingGallery.tscn" type="PackedScene" id=9]
 
 [sub_resource type="StyleBoxFlat" id=1]
 bg_color = Color( 0, 0, 0, 0.164706 )
@@ -93,16 +94,24 @@ rect_min_size = Vector2( 0, 150 )
 [node name="DebugText" type="RichTextLabel" parent="Screen/Contents"]
 margin_top = 154.0
 margin_right = 1070.0
-margin_bottom = 254.0
-rect_min_size = Vector2( 0, 100 )
+margin_bottom = 189.0
+rect_min_size = Vector2( 0, 35 )
 theme = ExtResource( 1 )
 custom_colors/default_color = Color( 1, 0.635294, 0.368627, 1 )
-text = "debugging output below:
-"
+text = "debugging output below:"
 scroll_active = false
 scroll_following = true
 
-[node name="SettingGallery" type="ScrollContainer" parent="Screen/Contents"]
+[node name="SettingGallery" parent="Screen/Contents" instance=ExtResource( 9 )]
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_top = 193.0
+margin_right = 1070.0
+margin_bottom = 1577.0
+size_flags_vertical = 3
+
+[node name="SettingGalleryOld" type="ScrollContainer" parent="Screen/Contents"]
+visible = false
 margin_top = 258.0
 margin_right = 1070.0
 margin_bottom = 1577.0
@@ -116,7 +125,7 @@ follow_focus = true
 scroll_vertical_enabled = false
 scroll_deadzone = 10
 
-[node name="Settings" type="HBoxContainer" parent="Screen/Contents/SettingGallery"]
+[node name="Settings" type="HBoxContainer" parent="Screen/Contents/SettingGalleryOld"]
 margin_bottom = 1319.0
 size_flags_vertical = 3
 custom_constants/separation = 10

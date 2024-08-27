@@ -1,13 +1,20 @@
-extends VBoxContainer
+tool
+extends Panel
 
-export var config_pretty_name = "Setting"
-export var config_name = "setting"
-export var config_value = 1.0
-export var config_type = "slider"
+export var setting_type = 0
 
+func set_slider_value(new_value):	
+	var full_width = self.rect_size.x;
+	print(full_width)
+	var new_width = full_width*new_value
+	$Slider/Value.rect_size.x = new_width
+
+# Called when the node enters the scene tree for the first time.
 func _ready():
-	$Label.text = config_pretty_name
+	pass # Replace with function body.
+
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
+	set_slider_value(0.1)
 	pass
