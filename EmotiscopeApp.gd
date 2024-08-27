@@ -10,20 +10,23 @@ var setting_scene = load("res://Assets/UI/Setting/Setting.tscn")
 var slider_scene  = load("res://Assets/UI/Slider/Slider.tscn")
 
 # Current device IP
-var device_ip = "192.168.86.224" # TODO: wire up device discovery to Godot
+var current_device_ip = "0.0.0.0"
 
 # Websocket client
-var STATE_REQUEST_FRAME_INTERVAL = 20
+var STATE_REQUEST_FRAME_INTERVAL = 30
 var next_state_request_wait_counter = 0
 var ws_client
 var ws_client_connected = false
 var state_request_active = false
 var state_request_wait_frames = 0
 
+var http_request;
+
 # --------------------------------------------------------
 # NETWORKING
 # --------------------------------------------------------
 func connect_to_websocket():
+	print("connect to websocket")
 	if ws_client_connected == false:
 		get_parent().spinner_enabled = true
 		# Start client
@@ -36,9 +39,11 @@ func connect_to_websocket():
 		ws_client.connect("data_received", self, "wsrx")
 		
 		# Initiate connection to an Emotiscope
-		var result = ws_client.connect_to_url("ws://"+device_ip+"/ws")
+		var result = ws_client.connect_to_url("ws://"+current_device_ip+"/ws")
 		if result != OK:
 			print("Unable to connect")
+	else:
+		print("Tried to connect to WS while ws_client_connected already marked true")
 
 func ws_connected(proto = ""):
 	print("Connected with protocol: ", proto)
@@ -55,7 +60,7 @@ func ws_closed(was_clean = false):
 	#restart_app()
 
 func wstx(message):
-	#print("TX: "+message)
+	print("TX: "+message)
 	if ws_client_connected == true:
 		#$Screen/Contents/DebugOutput.text = "TX: "+ message + "\n"
 		ws_client.get_peer(1).put_packet(message.to_utf8())
@@ -64,7 +69,7 @@ func wstx(message):
 
 func wsrx():
 	var message = ws_client.get_peer(1).get_packet().get_string_from_utf8()
-	#print("RX: "+message)
+	print("RX: "+message)
 	
 	#$Contents/DebugText.text = "RX: " + message + "\n"
 	parse_emotiscope_packet(message)
@@ -94,8 +99,8 @@ func run_websocket():
 	# If we haven't yet recieved a response
 	if state_request_active == true:
 		state_request_wait_frames += 1
-		# Restart app if no response in 2 seconds (on 60Hz screen)
-		if state_request_wait_frames >= 120:
+		# Restart app if no response in 4 seconds (on 60Hz screen)
+		if state_request_wait_frames >= 240:
 			kill_websocket()
 			connect_to_websocket()
 	
@@ -205,12 +210,54 @@ func run_debug():
 		# Enable V-Sync
 		OS.vsync_enabled = true
 
+func _on_request_completed(result, response_code, headers, body):
+	if response_code == 200:
+		var response_string = body.get_string_from_utf8()
+		if "error" in response_string:
+			if "No devices checked in" in response_string:
+				print("NO DEVICES CHECKED IN")
+			else:
+				print("UNSUPPORTED ERROR: "+response_string)
+		else:
+			var response_data = JSON.parse(response_string)
+			
+			if response_data.error == OK:
+				var device_list = response_data.result
+		
+				print("Devices: ")
+				print(device_list)
+				
+				for device in device_list:
+					print(device["local_ip"])
+				
+				current_device_ip = device_list[0]["local_ip"]
+				print("NEW DEVICE IP: |"+current_device_ip+"|")
+				
+				remove_child(http_request)
+				
+				connect_to_websocket()
+			else:
+				print("JSON RESPONSE PARSING ERROR")
+	else:
+		print("Request failed with code: ", response_code)
+
 # ------------------------------------------------------------------------------------------
 # RUNTIME
 # ------------------------------------------------------------------------------------------
 
 func _ready():
+	http_request = HTTPRequest.new()
+	add_child(http_request)
+	http_request.connect("request_completed", self, "_on_request_completed")
+	
+	var url = "https://app.emotiscope.rocks/discovery"
+	var response = http_request.request(url)
+	
+	if response != OK:
+		print("Failed to make request: ", response)
+	
 	connect_to_websocket()
+	
 	$Contents/SettingGallery.get_h_scrollbar().modulate.a = 0.5
 
 var iter = 0

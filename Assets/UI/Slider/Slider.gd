@@ -41,19 +41,23 @@ func _process(delta):
 
 func _on_Slider_gui_input(event):
 	if event is InputEventMouseButton or event in InputEventScreenTouch:
-		if event.pressed:
+		if event.pressed == true:
 			get_tree().root.get_child(0).touch_active = true
+			get_tree().root.get_child(0).get_child(0).wstx("EMO~touch_event|0")
 			print("Pointer Down: "+get_parent().config_pretty_name)
 			last_drag = event.position
 			state = 1.0
 			
-		else:
+		elif event.pressed == false:
 			print("Pointer Up: "+get_parent().config_pretty_name)
 			get_tree().root.get_child(0).touch_active = false
 			state = 0.0
 			scroll_lock_pos = -1.0
-			
-			
+		
+		else:
+			print("UNKNOWN EVENT!")
+
+
 	elif event is InputEventScreenDrag:
 		get_tree().root.get_child(0).touch_active = true
 		var current_pos = event.position
