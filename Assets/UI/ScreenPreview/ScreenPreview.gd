@@ -60,31 +60,14 @@ func update_preview():
 	for i in range(64):
 		var progress = i / float(64)
 		
-		if mirror_mode == 1.0:
-			progress = 1.0-saw_to_triangle(progress)
+		var new_red = int(graph_items[i][0])/64.0
+		var new_grn = int(graph_items[i][1])/64.0
+		var new_blu = int(graph_items[i][2])/64.0
 		
-		var current_color = Color.from_hsv(
-			wrap_float(hue + hue_range*progress),
-			saturation,
-			brightness
-		)
-		
-		var mix = warmth
-		var mix_inv = 1.0 - mix
-		var warmed_color = Color(
-			current_color.r * (incandescent_lookup.r * mix + mix_inv),
-			current_color.g * (incandescent_lookup.g * mix + mix_inv),
-			current_color.b * (incandescent_lookup.b * mix + mix_inv)
-		)
-		
-		var new_red = int(graph_items[i][0])/255.0
-		var new_grn = int(graph_items[i][1])/255.0
-		var new_blu = int(graph_items[i][2])/255.0
-		
-		new_red = sqrt(new_red)
-		new_grn = sqrt(new_grn)
-		new_blu = sqrt(new_blu)
-				
+		#new_red = sqrt(new_red)
+		#new_grn = sqrt(new_grn)
+		#new_blu = sqrt(new_blu)
+
 		var new_color = Color(
 			new_red,
 			new_grn,

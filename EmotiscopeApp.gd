@@ -15,7 +15,7 @@ var current_device_ip = "192.168.86.224"
 var current_device_nickname = "emotiscope"
 
 # Websocket client
-var STATE_REQUEST_FRAME_INTERVAL = 10
+var STATE_REQUEST_FRAME_INTERVAL = 5
 var next_state_request_wait_counter = 0
 var ws_client
 var ws_client_connected = false
@@ -127,6 +127,12 @@ func run_websocket():
 # Configuration
 # ----------------------------------------------------------------
 
+func decode_screen_pixel(code):
+	var charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
+	for i in range(len(charset)):
+		if charset[i] == code:
+			return i
+
 func parse_emotiscope_packet(packet):
 	state_request_active = false
 	
@@ -174,16 +180,19 @@ func parse_emotiscope_packet(packet):
 	
 	elif section_header == "screen":
 		num_items = int(packet[1])
+		
 		if num_items != len($Contents/ScreenPreview.graph_items):
 			$Contents/ScreenPreview.set_graph_length(num_items)
 			print("RESIZING SCREEN PREVIEW")
-		
-		var graph_contents = packet[2].split("*")
+		#
+		var graph_contents = packet[2]
 		for i in range(num_items):
-			if len(graph_contents[i]) > 1:
-				var pixel_data = graph_contents[i].split(",")	
-				$Contents/ScreenPreview.graph_items[i] = pixel_data
-		
+			var pixel_data_r = decode_screen_pixel(graph_contents[i*3 + 0])
+			var pixel_data_g = decode_screen_pixel(graph_contents[i*3 + 1])
+			var pixel_data_b = decode_screen_pixel(graph_contents[i*3 + 2])
+			
+			$Contents/ScreenPreview.graph_items[i] = [pixel_data_r, pixel_data_g, pixel_data_b]
+			
 		$Contents/ScreenPreview.update_preview()
 		
 	if get_parent().spinner_enabled == true:

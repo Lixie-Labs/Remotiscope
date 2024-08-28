@@ -70,13 +70,13 @@ texture_normal = ExtResource( 3 )
 [node name="HeaderMargin" type="Panel" parent="Contents"]
 margin_top = 49.0
 margin_right = 1070.0
-margin_bottom = 209.0
-rect_min_size = Vector2( 0, 160 )
+margin_bottom = 129.0
+rect_min_size = Vector2( 0, 80 )
 mouse_filter = 1
 custom_styles/panel = SubResource( 3 )
 
 [node name="Modes" type="HBoxContainer" parent="Contents"]
-margin_top = 213.0
+margin_top = 133.0
 margin_right = 1070.0
 margin_bottom = 1670.0
 size_flags_vertical = 3
@@ -84,7 +84,7 @@ custom_constants/separation = 10
 
 [node name="Active" type="VBoxContainer" parent="Contents/Modes"]
 margin_right = 530.0
-margin_bottom = 1457.0
+margin_bottom = 1537.0
 size_flags_horizontal = 3
 
 [node name="Label" type="Label" parent="Contents/Modes/Active"]
@@ -119,7 +119,7 @@ custom_styles/panel = SubResource( 6 )
 [node name="ScrollContainer" type="ScrollContainer" parent="Contents/Modes/Active"]
 margin_top = 108.0
 margin_right = 530.0
-margin_bottom = 1457.0
+margin_bottom = 1537.0
 mouse_filter = 1
 size_flags_vertical = 3
 theme = ExtResource( 6 )
@@ -131,7 +131,7 @@ size_flags_horizontal = 3
 [node name="Inactive" type="VBoxContainer" parent="Contents/Modes"]
 margin_left = 540.0
 margin_right = 1070.0
-margin_bottom = 1457.0
+margin_bottom = 1537.0
 size_flags_horizontal = 3
 
 [node name="Label" type="Label" parent="Contents/Modes/Inactive"]
@@ -163,7 +163,7 @@ custom_styles/panel = SubResource( 6 )
 [node name="ScrollContainer" type="ScrollContainer" parent="Contents/Modes/Inactive"]
 margin_top = 108.0
 margin_right = 530.0
-margin_bottom = 1457.0
+margin_bottom = 1537.0
 mouse_filter = 1
 size_flags_vertical = 3
 theme = ExtResource( 6 )
