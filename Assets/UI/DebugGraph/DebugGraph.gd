@@ -24,7 +24,7 @@ func update_graph():
 			Vector2(
 				graph_line_width,
 				150
-			) 
+			)
 		)
 		
 		#print(rect)

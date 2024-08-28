@@ -13,7 +13,7 @@ var slider_scene  = load("res://Assets/UI/Slider/Slider.tscn")
 var current_device_ip = "0.0.0.0"
 
 # Websocket client
-var STATE_REQUEST_FRAME_INTERVAL = 30
+var STATE_REQUEST_FRAME_INTERVAL = 5
 var next_state_request_wait_counter = 0
 var ws_client
 var ws_client_connected = false
@@ -182,14 +182,16 @@ func update_config_item_by_name(name, type, ui_type, value):
 		setting.config_ui_type = ui_type
 		setting.config_value = float(value)
 		
-		setting.set_setting_name(name)
-		
+		setting.set_setting_name(name)	
 		if ui_type == "s" or ui_type == "t":
+			#setting.set_slider_value(float(value))
 			$Contents/SettingGallery/Settings.add_child(setting)
 	else:
 		#print("CONFIG FOUND")
 		if ui_type == "s" or ui_type == "t":
 			$Contents/SettingGallery/Settings.get_node(name).config_value = float(value)
+			
+		$Contents/ColorPreview.update_color_preview()
 
 # -----------------------------------------------------------
 # Graphics
@@ -272,4 +274,4 @@ func _process(delta):
 	run_graphics(delta)
 	run_debug()
 
-	#request_emotiscope_graph()
+	request_emotiscope_graph()
