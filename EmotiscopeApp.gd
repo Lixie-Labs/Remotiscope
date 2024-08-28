@@ -31,7 +31,7 @@ var http_request;
 # --------------------------------------------------------
 func connect_to_websocket():
 	$Header/HeaderText.text = current_device_nickname
-	get_node("../Window/NicknameScreen/Contents/NicknameEntry/NicknameBox").text = current_device_nickname
+	#get_node("../Window/NicknameScreen/Contents/NicknameEntry/NicknameBox").text = current_device_nickname
 	
 	print("connect to websocket")
 	if ws_client_connected == false:
@@ -259,6 +259,10 @@ func _on_request_completed(result, response_code, headers, body):
 				print("Devices: ")
 				print(device_list)
 				
+				var device_list_node = get_node("../Window/NicknameScreen/Contents/DeviceListContainer/ScrollContainer/DeviceList")
+				for child in device_list_node.get_children():
+					device_list_node.remove_child(child)
+				
 				for device in device_list:
 					var device_id = str(device["local_ip"]).replace(".","")
 					if not get_node("../Window/NicknameScreen/Contents/DeviceListContainer/ScrollContainer/DeviceList/"+device_id):
@@ -286,11 +290,7 @@ func _on_request_completed(result, response_code, headers, body):
 	else:
 		print("Request failed with code: ", response_code)
 
-# ------------------------------------------------------------------------------------------
-# RUNTIME
-# ------------------------------------------------------------------------------------------
-
-func _ready():
+func fetch_devices_from_discovery_server():
 	http_request = HTTPRequest.new()
 	add_child(http_request)
 	http_request.connect("request_completed", self, "_on_request_completed")
@@ -300,7 +300,13 @@ func _ready():
 	
 	if response != OK:
 		print("Failed to make request: ", response)
-	
+
+# ------------------------------------------------------------------------------------------
+# RUNTIME
+# ------------------------------------------------------------------------------------------
+
+func _ready():
+	fetch_devices_from_discovery_server()
 	connect_to_websocket()
 	
 	$Contents/SettingGallery.get_h_scrollbar().modulate.a = 0.5
@@ -320,5 +326,10 @@ func _process(delta):
 func _on_HeaderText_gui_input(event):
 	if event is InputEventMouseButton or event in InputEventScreenTouch:
 		if event.pressed == true:
+			var device_list_node = get_node("../Window/NicknameScreen/Contents/DeviceListContainer/ScrollContainer/DeviceList")
+			for child in device_list_node.get_children():
+					device_list_node.remove_child(child)
+			fetch_devices_from_discovery_server()
+			get_node("../Window/NicknameScreen/Contents/NicknameEntry/NicknameBox").text = current_device_nickname
 			get_node("../Window/NicknameScreen").show()
 			get_node("../Window").window_visible = true

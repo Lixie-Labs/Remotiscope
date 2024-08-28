@@ -127,6 +127,7 @@ mouse_filter = 1
 [node name="DeviceList" type="VBoxContainer" parent="Contents/DeviceListContainer/ScrollContainer"]
 margin_right = 1060.0
 size_flags_horizontal = 3
+custom_constants/separation = 10
 
 [node name="NicknameEntry" type="VBoxContainer" parent="Contents"]
 margin_top = 1312.0
