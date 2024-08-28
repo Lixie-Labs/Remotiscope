@@ -8,12 +8,13 @@ extends VBoxContainer
 # Load children
 var setting_scene = load("res://Assets/UI/Setting/Setting.tscn")
 var slider_scene  = load("res://Assets/UI/Slider/Slider.tscn")
+var mode_button_scene = load("res://Assets/UI/ModeButton/ModeButton.tscn")
 
 # Current device IP
 var current_device_ip = "0.0.0.0"
 
 # Websocket client
-var STATE_REQUEST_FRAME_INTERVAL = 5
+var STATE_REQUEST_FRAME_INTERVAL = 10
 var next_state_request_wait_counter = 0
 var ws_client
 var ws_client_connected = false
@@ -152,20 +153,20 @@ func parse_emotiscope_packet(packet):
 			var mode_name = packet[1 + (i*2 + 0)]
 			var mode_type = packet[1 + (i*2 + 1)]
 			
-			#print(mode_name + ": " + mode_type)
+			add_mode_to_list(mode_name, mode_type)
 	
-	elif section_header == "graph":
+	elif section_header == "screen":
 		num_items = int(packet[1])
-		if num_items != len($Contents/DebugGraph.graph_items):
-			$Contents/DebugGraph.set_graph_length(num_items)
-			print("RESIZING GRAPH")
+		if num_items != len($Contents/ScreenPreview.graph_items):
+			$Contents/ScreenPreview.set_graph_length(num_items)
+			print("RESIZING SCREEN PREVIEW")
 		
 		var graph_contents = packet[2].split(",")
 		for i in range(num_items):
 			var new_value = float(graph_contents[i]) / 255.0
-			$Contents/DebugGraph.graph_items[i] = new_value
+			$Contents/ScreenPreview.graph_items[i] = new_value
 		
-		$Contents/DebugGraph.update_graph()
+		$Contents/ScreenPreview.update_preview()
 		
 	if get_parent().spinner_enabled == true:
 		get_parent().spinner_enabled = false
@@ -191,7 +192,21 @@ func update_config_item_by_name(name, type, ui_type, value):
 		if ui_type == "s" or ui_type == "t":
 			$Contents/SettingGallery/Settings.get_node(name).config_value = float(value)
 			
-		$Contents/ColorPreview.update_color_preview()
+		$Contents/ScreenPreview.update_preview()
+
+func add_mode_to_list(mode_name, mode_type):
+	if mode_type == "0":
+		mode_type = "Active"
+	elif mode_type == "1":
+		mode_type = "Inactive"
+		
+	if not get_node("../Window/ModeScreen/Contents/Modes/"+mode_type+"/ScrollContainer/ModeList/"+mode_name):
+		print(mode_name + " not yet in "+mode_type+" modes!")
+		
+		var new_button = mode_button_scene.instance()
+		new_button.set_mode_button_name(mode_name)
+		
+		get_node("../Window/ModeScreen/Contents/Modes/"+mode_type+"/ScrollContainer/ModeList/").add_child(new_button)
 
 # -----------------------------------------------------------
 # Graphics

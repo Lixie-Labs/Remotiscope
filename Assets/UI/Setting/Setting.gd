@@ -80,7 +80,7 @@ func _on_Setting_gui_input(event):
 				shifted_value = 0.0
 		
 		get_tree().root.get_node("EmotiscopeApp/Screen").wstx("EMO~set_config|"+name+"|"+str(shifted_value))
-		get_tree().root.get_node("EmotiscopeApp/Screen/Contents/ColorPreview").update_color_preview()
+		get_tree().root.get_node("EmotiscopeApp/Screen/Contents/ScreenPreview").update_preview()
 
 		#if abs(drag_distance.y) > 4.0:
 		#	scroll_lock_pos = get_parent().get_parent().get_parent().scroll_horizontal
@@ -94,6 +94,8 @@ func run_graphics():
 	
 	value_smooth = value_smooth * 0.7 + current_value * 0.3
 	$Toggle/Knob.rect_position.x = min_x + span*value_smooth
+	
+	set_slider_value(config_value)
 
 # Called when the node enters the scene tree for the first time.
 func _ready():

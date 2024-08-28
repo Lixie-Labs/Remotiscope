@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=2]
+[gd_scene load_steps=24 format=2]
 
 [ext_resource path="res://Assets/Themes/ThemeDefault.tres" type="Theme" id=1]
 [ext_resource path="res://Assets/Themes/ThemeHeaderText.tres" type="Theme" id=2]
@@ -7,12 +7,35 @@
 [ext_resource path="res://Assets/SVG/info.svg" type="Texture" id=5]
 [ext_resource path="res://Assets/SVG/menu.svg" type="Texture" id=6]
 [ext_resource path="res://System.gd" type="Script" id=7]
-[ext_resource path="res://Assets/UI/DebugGraph/DebugGraph.tscn" type="PackedScene" id=8]
+[ext_resource path="res://Assets/UI/ScreenPreview/ScreenPreview.tscn" type="PackedScene" id=8]
 [ext_resource path="res://Assets/UI/SettingGallery/SettingGallery.tscn" type="PackedScene" id=9]
-[ext_resource path="res://ColorPreview.gd" type="Script" id=10]
+[ext_resource path="res://Window.gd" type="Script" id=10]
+[ext_resource path="res://Assets/Fonts/chakra_petch.ttf" type="DynamicFontData" id=11]
+[ext_resource path="res://Assets/UI/ModeScreen/ModeScreen.tscn" type="PackedScene" id=12]
+[ext_resource path="res://CurrentModeButton.gd" type="Script" id=13]
 
 [sub_resource type="StyleBoxFlat" id=1]
 bg_color = Color( 0, 0, 0, 0.164706 )
+
+[sub_resource type="DynamicFont" id=6]
+size = 24
+font_data = ExtResource( 11 )
+
+[sub_resource type="StyleBoxFlat" id=7]
+content_margin_left = 10.0
+content_margin_right = 10.0
+content_margin_top = 10.0
+content_margin_bottom = 10.0
+bg_color = Color( 0.027451, 0.0392157, 0.0862745, 1 )
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color( 1, 0.635294, 0.368627, 0.505882 )
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
 
 [sub_resource type="Gradient" id=3]
 offsets = PoolRealArray( 0, 0.995049 )
@@ -28,6 +51,33 @@ colors = PoolColorArray( 0.109804, 0.0705882, 0.160784, 1, 0.113725, 0.0784314, 
 [sub_resource type="GradientTexture" id=5]
 gradient = SubResource( 4 )
 width = 32
+
+[sub_resource type="Shader" id=10]
+code = "shader_type canvas_item;
+render_mode blend_mix;
+
+uniform float radius = 4.0;
+
+void fragment() {
+	vec4 col;//texture(SCREEN_TEXTURE, SCREEN_UV);
+	vec2 ps = SCREEN_PIXEL_SIZE;
+
+	col += texture(SCREEN_TEXTURE, SCREEN_UV + vec2(0.0, -radius) * ps);
+	col += texture(SCREEN_TEXTURE, SCREEN_UV + vec2(0.0, radius) * ps);
+	col += texture(SCREEN_TEXTURE, SCREEN_UV + vec2(-radius, 0.0) * ps);
+	col += texture(SCREEN_TEXTURE, SCREEN_UV + vec2(radius, 0.0) * ps);
+	col /= 15.0;
+	col[3] = 1.0;
+
+	COLOR = col;
+}"
+
+[sub_resource type="ShaderMaterial" id=11]
+shader = SubResource( 10 )
+shader_param/radius = 8.0
+
+[sub_resource type="StyleBoxFlat" id=8]
+bg_color = Color( 0, 0, 0, 0.839216 )
 
 [node name="EmotiscopeApp" type="Panel"]
 anchor_right = 1.0
@@ -48,10 +98,6 @@ margin_bottom = -15.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource( 4 )
-
-[node name="CanvasModulate" type="CanvasModulate" parent="Screen"]
-visible = false
-color = Color( 0.482353, 0.560784, 0.741176, 1 )
 
 [node name="Header" type="HBoxContainer" parent="Screen"]
 margin_right = 1070.0
@@ -92,37 +138,54 @@ margin_bottom = 10.0
 rect_min_size = Vector2( 0, 10 )
 expand = true
 
-[node name="ColorPreview" type="TextureRect" parent="Screen/Contents"]
-margin_top = 14.0
-margin_right = 1070.0
-margin_bottom = 24.0
-rect_min_size = Vector2( 0, 10 )
-expand = true
-script = ExtResource( 10 )
-
-[node name="DebugGraph" parent="Screen/Contents" instance=ExtResource( 8 )]
+[node name="ScreenPreview" parent="Screen/Contents" instance=ExtResource( 8 )]
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_top = 28.0
+margin_top = 14.0
+margin_right = 1070.0
+margin_bottom = 164.0
+rect_min_size = Vector2( 0, 150 )
+stretch_mode = 0
+
+[node name="DebugText" type="Label" parent="Screen/Contents"]
+visible = false
+margin_top = 168.0
+margin_right = 1070.0
+margin_bottom = 182.0
+theme = ExtResource( 1 )
+text = "debugging output below:"
+align = 1
+
+[node name="ModeMargin" type="TextureRect" parent="Screen/Contents"]
+margin_top = 168.0
 margin_right = 1070.0
 margin_bottom = 178.0
-rect_min_size = Vector2( 0, 150 )
+rect_min_size = Vector2( 0, 10 )
+expand = true
 
-[node name="DebugText" type="RichTextLabel" parent="Screen/Contents"]
+[node name="CurrentMode" type="Label" parent="Screen/Contents"]
 margin_top = 182.0
 margin_right = 1070.0
-margin_bottom = 217.0
-rect_min_size = Vector2( 0, 35 )
-theme = ExtResource( 1 )
-custom_colors/default_color = Color( 1, 0.635294, 0.368627, 1 )
-text = "debugging output below:"
-scroll_active = false
-scroll_following = true
+margin_bottom = 234.0
+mouse_filter = 1
+custom_fonts/font = SubResource( 6 )
+custom_styles/normal = SubResource( 7 )
+text = "SPECTRUM"
+align = 1
+valign = 1
+script = ExtResource( 13 )
+
+[node name="ModeMargin2" type="TextureRect" parent="Screen/Contents"]
+margin_top = 238.0
+margin_right = 1070.0
+margin_bottom = 248.0
+rect_min_size = Vector2( 0, 10 )
+expand = true
 
 [node name="SettingGallery" parent="Screen/Contents" instance=ExtResource( 9 )]
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_top = 221.0
+margin_top = 252.0
 margin_right = 1070.0
 margin_bottom = 1621.0
 size_flags_vertical = 3
@@ -149,6 +212,20 @@ size_flags_vertical = 0
 texture = SubResource( 5 )
 expand = true
 
+[node name="Window" type="Panel" parent="."]
+visible = false
+material = SubResource( 11 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 1
+custom_styles/panel = SubResource( 8 )
+script = ExtResource( 10 )
+
+[node name="ModeScreen" parent="Window" instance=ExtResource( 12 )]
+visible = false
+
 [node name="Spinner" parent="." instance=ExtResource( 3 )]
 visible = false
 position = Vector2( 550, 850 )
+
+[connection signal="gui_input" from="Screen/Contents/CurrentMode" to="Screen/Contents/CurrentMode" method="_on_CurrentMode_gui_input"]
