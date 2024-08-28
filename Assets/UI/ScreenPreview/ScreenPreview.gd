@@ -77,7 +77,25 @@ func update_preview():
 			current_color.b * (incandescent_lookup.b * mix + mix_inv)
 		)
 		
-		var shifted_item = graph_items[i]*0.95 + 0.05
+		var new_red = int(graph_items[i][0])/255.0
+		var new_grn = int(graph_items[i][1])/255.0
+		var new_blu = int(graph_items[i][2])/255.0
+		
+		new_red = sqrt(new_red)
+		new_grn = sqrt(new_grn)
+		new_blu = sqrt(new_blu)
+				
+		var new_color = Color(
+			new_red,
+			new_grn,
+			new_blu
+		)
+		var max_color = 0.0
+		max_color = max(max_color, new_red)
+		max_color = max(max_color, new_grn)
+		max_color = max(max_color, new_blu)
+		
+		var shifted_item = max_color*0.95 + 0.05
 		
 		var rect = Rect2(
 			Vector2(
@@ -90,7 +108,7 @@ func update_preview():
 			)
 		)
 		
-		ColorPreviewImage.fill_rect(rect, warmed_color)
+		ColorPreviewImage.fill_rect(rect, new_color)
 		
 	ColorPreviewTexture.set_data(ColorPreviewImage)
 

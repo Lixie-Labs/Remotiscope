@@ -173,10 +173,11 @@ func parse_emotiscope_packet(packet):
 			$Contents/ScreenPreview.set_graph_length(num_items)
 			print("RESIZING SCREEN PREVIEW")
 		
-		var graph_contents = packet[2].split(",")
+		var graph_contents = packet[2].split("*")
 		for i in range(num_items):
-			var new_value = float(graph_contents[i]) / 255.0
-			$Contents/ScreenPreview.graph_items[i] = new_value
+			if len(graph_contents[i]) > 1:
+				var pixel_data = graph_contents[i].split(",")	
+				$Contents/ScreenPreview.graph_items[i] = pixel_data
 		
 		$Contents/ScreenPreview.update_preview()
 		
