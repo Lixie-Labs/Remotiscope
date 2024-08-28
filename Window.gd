@@ -12,7 +12,10 @@ func _process(delta):
 	if window_visible == true:
 		window_opacity_target = 1.0
 	else:
-		window_opacity_target = 0.0
+		if window_opacity_target != 0.0:
+			window_opacity_target = 0.0
+			for child in get_children():
+				child.hide()
 	
 	if window_opacity < 0.01:
 		self.hide()

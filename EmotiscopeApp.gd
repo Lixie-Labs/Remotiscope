@@ -7,11 +7,12 @@ extends VBoxContainer
 
 # Load children
 var setting_scene = load("res://Assets/UI/Setting/Setting.tscn")
-var slider_scene  = load("res://Assets/UI/Slider/Slider.tscn")
+var device_scene = load("res://Assets/UI/Device/Device.tscn")
 var mode_button_scene = load("res://Assets/UI/ModeButton/ModeButton.tscn")
 
 # Current device IP
-var current_device_ip = "0.0.0.0"
+var current_device_ip = "192.168.86.224"
+var current_device_nickname = "emotiscope"
 
 # Websocket client
 var STATE_REQUEST_FRAME_INTERVAL = 10
@@ -29,6 +30,9 @@ var http_request;
 # NETWORKING
 # --------------------------------------------------------
 func connect_to_websocket():
+	$Header/HeaderText.text = current_device_nickname
+	get_node("../Window/NicknameScreen/Contents/NicknameEntry/NicknameBox").text = current_device_nickname
+	
 	print("connect to websocket")
 	if ws_client_connected == false:
 		get_parent().spinner_enabled = true
@@ -68,7 +72,8 @@ func wstx(message):
 		#$Screen/Contents/DebugOutput.text = "TX: "+ message + "\n"
 		ws_client.get_peer(1).put_packet(message.to_utf8())
 	else:
-		print("WSTX while not connected")
+		#print("WSTX while not connected")
+		pass
 
 func wsrx():
 	var message = ws_client.get_peer(1).get_packet().get_string_from_utf8()
@@ -156,6 +161,11 @@ func parse_emotiscope_packet(packet):
 			var mode_type = packet[1 + (i*2 + 1)]
 			
 			add_mode_to_list(mode_name, mode_type)
+	
+	elif section_header == "nickname":
+		var device_nickname = packet[1]
+		current_device_nickname = device_nickname
+		$Header/HeaderText.text = current_device_nickname
 	
 	elif section_header == "screen":
 		num_items = int(packet[1])
@@ -250,9 +260,22 @@ func _on_request_completed(result, response_code, headers, body):
 				print(device_list)
 				
 				for device in device_list:
-					print(device["local_ip"])
+					var device_id = str(device["local_ip"]).replace(".","")
+					if not get_node("../Window/NicknameScreen/Contents/DeviceListContainer/ScrollContainer/DeviceList/"+device_id):
+						var check_in_age_minutes = 0
+						var current_time = OS.get_unix_time()
+						var last_check_in_time = int(device["timestamp"])
+						check_in_age_minutes = int((current_time - last_check_in_time) / 60.0)
+						
+						var new_device = device_scene.instance()
+						new_device.ip_address = device["local_ip"]
+						new_device.firmware_version = device["version"]
+						new_device.last_check_in = "seen "+str(check_in_age_minutes)+" min ago"
+						new_device.nickname = device["nickname"]
+						get_node("../Window/NicknameScreen/Contents/DeviceListContainer/ScrollContainer/DeviceList").add_child(new_device)
 				
 				current_device_ip = device_list[0]["local_ip"]
+				current_device_nickname = device_list[0]["nickname"]
 				print("NEW DEVICE IP: |"+current_device_ip+"|")
 				
 				remove_child(http_request)
@@ -292,3 +315,10 @@ func _process(delta):
 	run_debug()
 
 	request_emotiscope_graph()
+
+
+func _on_HeaderText_gui_input(event):
+	if event is InputEventMouseButton or event in InputEventScreenTouch:
+		if event.pressed == true:
+			get_node("../Window/NicknameScreen").show()
+			get_node("../Window").window_visible = true

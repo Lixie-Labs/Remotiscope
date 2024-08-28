@@ -14,5 +14,6 @@ func _ready():
 
 
 func _on_CloseButton_button_up():
+	print("TEST")
 	close_window()
 	pass # Replace with function body.
