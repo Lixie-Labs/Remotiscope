@@ -21,6 +21,8 @@ var ws_client_connected = false
 var state_request_active = false
 var state_request_wait_frames = 0
 
+var device_list = []
+
 var http_request;
 
 # --------------------------------------------------------
@@ -242,7 +244,7 @@ func _on_request_completed(result, response_code, headers, body):
 			var response_data = JSON.parse(response_string)
 			
 			if response_data.error == OK:
-				var device_list = response_data.result
+				device_list = response_data.result
 		
 				print("Devices: ")
 				print(device_list)

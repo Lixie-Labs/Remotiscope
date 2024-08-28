@@ -24,6 +24,7 @@ corner_radius_bottom_left = 10
 [node name="ModeButton" type="VBoxContainer"]
 anchor_right = 1.0
 anchor_bottom = 1.0
+mouse_filter = 0
 size_flags_horizontal = 3
 script = ExtResource( 2 )
 
