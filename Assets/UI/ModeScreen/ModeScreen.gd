@@ -1,5 +1,7 @@
 extends VBoxContainer
 
+var mode_list = []
+
 func close_window():
 	get_parent().window_visible = false
 

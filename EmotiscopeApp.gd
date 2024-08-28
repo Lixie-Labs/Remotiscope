@@ -150,6 +150,11 @@ func parse_emotiscope_packet(packet):
 			var config_ui_type = packet[1 + (i*4 + 2)]
 			var config_value   = packet[1 + (i*4 + 3)]
 			
+			if len(get_node("../Window/ModeScreen").mode_list) >= int(config_value)+1:
+				if config_name == "Current Mode":
+					var mode_name_string = get_node("../Window/ModeScreen").mode_list[int(config_value)]
+					$Contents/CurrentMode.text = str(mode_name_string).to_upper()
+			
 			if config_ui_type == "s" or config_ui_type == "t":
 				update_config_item_by_name(config_name, config_type, config_ui_type, config_value)
 			
@@ -160,7 +165,7 @@ func parse_emotiscope_packet(packet):
 			var mode_name = packet[1 + (i*2 + 0)]
 			var mode_type = packet[1 + (i*2 + 1)]
 			
-			add_mode_to_list(mode_name, mode_type)
+			add_mode_to_list(mode_name, mode_type, i)
 	
 	elif section_header == "nickname":
 		var device_nickname = packet[1]
@@ -207,7 +212,7 @@ func update_config_item_by_name(name, type, ui_type, value):
 			
 		$Contents/ScreenPreview.update_preview()
 
-func add_mode_to_list(mode_name, mode_type):
+func add_mode_to_list(mode_name, mode_type, mode_index):
 	if mode_type == "0":
 		mode_type = "Active"
 	elif mode_type == "1":
@@ -218,8 +223,12 @@ func add_mode_to_list(mode_name, mode_type):
 		
 		var new_button = mode_button_scene.instance()
 		new_button.set_mode_button_name(mode_name)
+		new_button.mode_index = mode_index
 		
 		get_node("../Window/ModeScreen/Contents/Modes/"+mode_type+"/ScrollContainer/ModeList/").add_child(new_button)
+		
+		get_node("../Window/ModeScreen").mode_list.append(mode_name)
+		
 
 # -----------------------------------------------------------
 # Graphics

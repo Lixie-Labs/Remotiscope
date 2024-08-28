@@ -1,6 +1,7 @@
 extends VBoxContainer
 
 var mode_name = "Mode Name"
+var mode_index = 0
 
 func set_mode_button_name(new_name):
 	mode_name = new_name
@@ -20,4 +21,6 @@ func _process(delta):
 func _on_ModeButton_gui_input(event):
 	if event is InputEventMouseButton or event in InputEventScreenTouch:
 		if event.pressed == true:
-			get_tree().root.get_node("EmotiscopeApp/Screen").wstx("EMO~set_config|current_mode|0|0")
+			print("CLICK")
+			get_tree().root.get_node("EmotiscopeApp/Screen").wstx("EMO~set_config|Current Mode|"+str(mode_index))
+			get_tree().root.get_node("EmotiscopeApp/Window").window_visible = false
