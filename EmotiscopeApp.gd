@@ -320,6 +320,17 @@ func fetch_devices_from_discovery_server():
 	
 	if response != OK:
 		print("Failed to make request: ", response)
+		
+func main_loop(delta):
+	iter += 1
+	
+	if iter % 2 == 0:
+		run_websocket()
+		
+	run_graphics(delta)
+	run_debug()
+
+	request_emotiscope_graph()	
 
 # ------------------------------------------------------------------------------------------
 # RUNTIME
@@ -333,15 +344,7 @@ func _ready():
 
 var iter = 0
 func _process(delta):
-	iter += 1
-	# Call this in _process or _physics_process. Data transfer, and signals
-	# emission will only happen when calling this function.
-	run_websocket()
-	run_graphics(delta)
-	run_debug()
-
-	request_emotiscope_graph()
-
+	main_loop(delta)
 
 func _on_HeaderText_gui_input(event):
 	if event is InputEventMouseButton or event in InputEventScreenTouch:
