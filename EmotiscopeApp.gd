@@ -324,8 +324,10 @@ func fetch_devices_from_discovery_server():
 func main_loop(delta):
 	iter += 1
 	
-	if iter % 2 == 0:
+	if iter % 1 == 0:
 		run_websocket()
+		#run_websocket()
+	
 		request_emotiscope_graph()
 		
 	run_graphics(delta)
