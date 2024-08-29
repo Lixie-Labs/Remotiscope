@@ -315,7 +315,7 @@ func fetch_devices_from_discovery_server():
 	add_child(http_request)
 	http_request.connect("request_completed", self, "_on_request_completed")
 	
-	var url = "https://app.emotiscope.rocks/discovery"
+	var url = "http://app.emotiscope.rocks/discovery"
 	var response = http_request.request(url)
 	
 	if response != OK:
