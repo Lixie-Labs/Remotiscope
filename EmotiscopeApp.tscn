@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=2]
+[gd_scene load_steps=30 format=2]
 
 [ext_resource path="res://Assets/Themes/ThemeDefault.tres" type="Theme" id=1]
 [ext_resource path="res://Assets/Themes/ThemeHeaderText.tres" type="Theme" id=2]
@@ -14,6 +14,7 @@
 [ext_resource path="res://Assets/UI/ModeScreen/ModeScreen.tscn" type="PackedScene" id=12]
 [ext_resource path="res://Assets/UI/ModeButton/CurrentModeButton.gd" type="Script" id=13]
 [ext_resource path="res://Assets/UI/NicknameScreen/NicknameScreen.tscn" type="PackedScene" id=14]
+[ext_resource path="res://Dialog.gd" type="Script" id=15]
 
 [sub_resource type="StyleBoxFlat" id=1]
 bg_color = Color( 0, 0, 0, 0.164706 )
@@ -79,6 +80,21 @@ shader_param/radius = 8.0
 
 [sub_resource type="StyleBoxFlat" id=8]
 bg_color = Color( 0, 0, 0, 0.839216 )
+
+[sub_resource type="StyleBoxFlat" id=12]
+bg_color = Color( 0.0196078, 0.0196078, 0.0196078, 1 )
+
+[sub_resource type="DynamicFont" id=13]
+font_data = ExtResource( 11 )
+
+[sub_resource type="DynamicFont" id=15]
+size = 20
+font_data = ExtResource( 11 )
+
+[sub_resource type="Theme" id=14]
+default_font = SubResource( 15 )
+Panel/styles/panel = SubResource( 12 )
+WindowDialog/fonts/title_font = SubResource( 13 )
 
 [node name="EmotiscopeApp" type="Panel"]
 anchor_right = 1.0
@@ -231,6 +247,23 @@ visible = false
 [node name="Spinner" parent="." instance=ExtResource( 3 )]
 visible = false
 position = Vector2( 550, 850 )
+
+[node name="Dialog" type="AcceptDialog" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -183.0
+margin_top = -194.0
+margin_right = 183.0
+margin_bottom = 194.0
+rect_min_size = Vector2( 200, 200 )
+size_flags_horizontal = 5
+size_flags_vertical = 5
+theme = SubResource( 14 )
+dialog_text = "This is a test of the dialog text"
+dialog_autowrap = true
+script = ExtResource( 15 )
 
 [connection signal="gui_input" from="Screen/Header/HeaderText" to="Screen" method="_on_HeaderText_gui_input"]
 [connection signal="gui_input" from="Screen/Contents/CurrentMode" to="Screen/Contents/CurrentMode" method="_on_CurrentMode_gui_input"]

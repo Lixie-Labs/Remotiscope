@@ -295,6 +295,7 @@ func _on_request_completed(result, response_code, headers, body):
 						new_device.firmware_version = device["version"]
 						new_device.last_check_in = "seen "+str(check_in_age_minutes)+" min ago"
 						new_device.nickname = device["nickname"]
+						
 						get_node("../Window/NicknameScreen/Contents/DeviceListContainer/ScrollContainer/DeviceList").add_child(new_device)
 				
 				current_device_ip = device_list[0]["local_ip"]
