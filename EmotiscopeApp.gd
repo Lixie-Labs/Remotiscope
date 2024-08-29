@@ -326,11 +326,10 @@ func main_loop(delta):
 	
 	if iter % 2 == 0:
 		run_websocket()
+		request_emotiscope_graph()
 		
 	run_graphics(delta)
 	run_debug()
-
-	request_emotiscope_graph()	
 
 # ------------------------------------------------------------------------------------------
 # RUNTIME
