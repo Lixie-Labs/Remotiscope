@@ -322,10 +322,8 @@ func fetch_devices_from_discovery_server():
 		print("Failed to make request: ", response)
 		
 func main_loop(delta):
-	iter += 1
-	
 	run_websocket()
-	#request_emotiscope_graph()
+	request_emotiscope_graph()
 		
 	run_graphics(delta)
 	run_debug()
