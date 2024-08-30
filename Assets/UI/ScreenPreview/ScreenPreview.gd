@@ -116,4 +116,5 @@ func _ready():
 	self.texture = ColorPreviewTexture
 
 func _process(delta):
+	update_preview()
 	pass
