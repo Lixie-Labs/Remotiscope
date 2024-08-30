@@ -85,11 +85,11 @@ func update_preview():
 		var rect = Rect2(
 			Vector2(
 				graph_line_width * i,
-				(150/2) - (150/2)*shifted_item
+				(150/2) - (150/4)*shifted_item
 			),
 			Vector2(
 				graph_line_width,
-				shifted_item*150
+				shifted_item*75
 			)
 		)
 		

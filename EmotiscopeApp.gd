@@ -21,6 +21,8 @@ var ws_client
 var ws_client_connected = false
 var state_request_active = false
 var state_request_wait_frames = 0
+var pong_wait_frames = 0
+var got_first_pong = false
 
 var device_list = []
 
@@ -102,6 +104,7 @@ func kill_websocket():
 	state_request_wait_frames = 0
 
 func run_websocket():
+	wstx("EMO~ping|0")
 	ws_client.poll()
 	
 	# If we haven't yet recieved a response
@@ -122,6 +125,15 @@ func run_websocket():
 		if state_request_active == false:
 			if ws_client_connected == true and get_parent().touch_active == false:
 				request_emotiscope_state()
+	
+	if pong_wait_frames > 10:
+		print("DISCONECTED!")
+		pong_wait_frames = 0
+		got_first_pong = false
+		kill_websocket()
+		connect_to_websocket()
+	else:
+		pong_wait_frames += 1
 
 # ----------------------------------------------------------------
 # Configuration
@@ -135,8 +147,9 @@ func decode_screen_pixel(code):
 
 func parse_emotiscope_packet(packet):
 	state_request_active = false
+	packet = packet.split("~")
+	packet = packet[1].split("|")
 	
-	packet = packet.split("~")[1].split("|")
 	var section_header = packet[0]
 	var num_items = len(packet) - 1
 	
@@ -194,6 +207,12 @@ func parse_emotiscope_packet(packet):
 			$Contents/ScreenPreview.graph_items[i] = [pixel_data_r, pixel_data_g, pixel_data_b]
 			
 		$Contents/ScreenPreview.update_preview()
+	
+	elif section_header == "pong":
+		if got_first_pong == false:
+			got_first_pong = true
+		else:
+			pong_wait_frames = 0
 		
 	if get_parent().spinner_enabled == true:
 		get_parent().spinner_enabled = false
